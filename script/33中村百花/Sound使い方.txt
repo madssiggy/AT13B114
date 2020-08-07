@@ -1,0 +1,27 @@
+　～　先生からもらった音楽ファイルの使いかた　～
+
+※先生から配布されたaudioclip.h audioclip.cpp resource.h resource.cppを用意してね！
+
+1.sceneのグローバルで
+static CAudioClip audio;
+のインスタンスを作る。
+
+2.scene.hのAddgameObjectを呼んでいる上らへんで
+  //　オーディオ設定
+  CAudioClip::Init();
+  CAudioClip::SetMasterVolume(0.1f);
+　を呼ぶ。
+
+3.sceneのUninitで	
+	CAudioClip::Uninit();
+　を呼ぶ。
+
+4.設定できたら音楽を流したいcppのInitで
+　audio.Load("asset//sound/〇〇.wav");
+
+5.鳴らしたいアップデートのところで
+　audio.Play(false); //trueでループfalseでループしない
+　ループさせたい場合はInitで呼び出してね！
+
+
+もしかしたらもっといい書き方使い方あるかも...気づいたことあったら遠慮なく教えてください！
