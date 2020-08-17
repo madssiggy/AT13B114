@@ -20,7 +20,7 @@
 #include "main.h"
 #include "renderer.h"
 #include "grid.h"
-
+#include "light.h"
 
 
 //1ラインのブロック数
@@ -81,11 +81,11 @@ void CGrid::Init()
 
 	//頂点バッファ生成
 	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));                  //構造体の中身を0で埋める
-	bd.Usage = D3D11_USAGE_DYNAMIC;               //頂点の情報を後で書き換えられるようにする
+	ZeroMemory(&bd, sizeof(bd));                            //構造体の中身を0で埋める
+	bd.Usage = D3D11_USAGE_DEFAULT;               
 	bd.ByteWidth = sizeof(VERTEX_3D) * GRID_VERTEX_NUM;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;      //頂点バッファ
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;   //頂点の情報を後で書き換えられるようにする
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;                //頂点バッファ
+	bd.CPUAccessFlags = 0;   
 
 	D3D11_SUBRESOURCE_DATA sd;
 	ZeroMemory(&sd, sizeof(sd));
@@ -127,6 +127,8 @@ void CGrid::Update()
 void CGrid::Draw()
 {
 #if defined(_DEBUG) || defined(DEBUG)
+	CLight::Switch(false);
+
 
 
 	//マトリクス設定
@@ -160,5 +162,6 @@ void CGrid::Draw()
 	CRenderer::GetDeviceContext()->Draw(GRID_VERTEX_NUM, 0);
 
 
+	CLight::Switch(true);
 #endif
 }
