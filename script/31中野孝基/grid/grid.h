@@ -1,12 +1,12 @@
-#ifndef _GRID_H_
-#define _GRID_H_
-
 //=====================================
 //    
 //   grid.cpp
 //              created by Koki Nakano
 //
 //=====================================
+
+#ifndef _GRID_H_
+#define _GRID_H_
 
 
 #include "gameobject.h"
