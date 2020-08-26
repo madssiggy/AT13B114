@@ -1,0 +1,179 @@
+package com.example.myapplication;
+
+import android.view.MotionEvent;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+public class C_Scene {
+    //シーン管理用※継承先を入れる
+    private static C_Scene m_scene = null;
+    //オブジェクト管理リスト
+   private static ArrayList<Sprite> m_obj_list = new ArrayList<>();
+   //オブジェクト管理リスト※Add_Obj()で追加時にイテレーター？(実はよくわかってない)が狂うからその時
+   private static ArrayList<Sprite> m_obj_temp_list = new ArrayList<>();
+   //ランダムを使う用
+   public static Random m_rand = new Random();
+   //現在のシーンのゲット
+   public static C_Scene Get_Now_Scene()
+   {
+       return m_scene;
+   }
+
+
+   //初期化※継承先でOverrideして使う
+    public void Init()
+    {
+
+    }
+    //終了処理※overrideする場合は関数内でもう一度基底のUninit()を呼んでください
+    public void Uninit()
+    {
+        m_obj_temp_list.clear();
+        Set_Unvivisble_All();
+        If_Unvisible_Remove_list();
+    }
+
+    //更新処理※overrideする場合は関数内でもう一度基底のUpdate()を呼んでください
+    public void Update(float dt)
+    {
+        for(Sprite sp : m_obj_list)
+        {
+           sp.Update(dt);
+        }
+        for(Sprite sp2 : m_obj_temp_list)
+        {
+            m_obj_list.add(sp2);
+        }
+        for(Sprite sp : m_obj_list)
+        {
+            sp.Check_Visible();
+        }
+        m_obj_temp_list.clear();
+        If_Unvisible_Remove_list();
+    }
+
+    //描画※overrideする？必要がある場合はよくコードをみてからすること
+    public void Draw()
+    {
+        //LAYER_MAXを定義してください
+        for(int i = 0;i <= Sprite.LAYER_MAX;i++) {
+            for (Sprite sp : m_obj_list) {
+                if (sp.layer == i) {
+                    sp.Draw();
+                }
+            }
+        }
+
+    }
+
+    //セットされたシーンの更新
+    public static void Update_m_scene(float dt)
+    {
+        m_scene.Update(dt);
+    }
+
+    //セットされたシーンの描画
+    public static void Draw_m_scene()
+    {
+        m_scene.Draw();
+    }
+
+    //シーンのセット
+    public static void Set_Scene(C_Scene a_scene)
+    {
+        if(m_scene != null)
+        {
+            m_scene.Uninit();
+            m_scene = null;
+        }
+        m_scene = a_scene;
+        m_scene.Init();
+    }
+
+    //タッチ※継承先でしたい処理を書く
+    public void Touch(MotionEvent event)
+    {
+
+    }
+    //オブジェクトの追加
+    //[in][out] Sprite(a_sp)オブジェクト
+    //[in] int(a_layer)レイヤー　0から描画される
+    public static void Add_Obj(Sprite a_sp,final int a_layer)
+    {
+        a_sp.layer = a_layer;
+        m_obj_temp_list.add(a_sp);
+    }
+
+    //エフェクトリスト取得
+    public static ArrayList<Effect> Get_Effect_List()
+    {
+        ArrayList<Effect> list = new ArrayList<>();
+        for(Object obj : m_obj_list)
+        {
+            if(obj instanceof Effect)
+            {
+                list.add((Effect) obj);
+            }
+        }
+        return list;
+    }
+
+    //エネミーリスト取得
+    public static ArrayList<Enemy> Get_Enemy_List()
+    {
+        ArrayList<Enemy> list = new ArrayList<>();
+        for(Object obj : m_obj_list)
+        {
+            if(obj instanceof Enemy)
+            {
+                list.add((Enemy)obj);
+            }
+        }
+        return list;
+    }
+    //プレイヤーリスト取得
+    public static ArrayList<Player> Get_Player_List()
+    {
+        ArrayList<Player> list = new ArrayList<>();
+        for(Object obj : m_obj_list)
+        {
+            if(obj instanceof Player)
+            {
+                list.add((Player) obj);
+            }
+        }
+        return list;
+    }
+
+
+
+
+    //プライベート関数は説明しません
+
+    private void If_Unvisible_Remove_list()
+    {
+        for(int i =0; i < m_obj_list.size(); i++)
+        {
+            if(m_obj_list.get(i).visible == false)
+            {
+                m_obj_list.set(i,null);
+                m_obj_list.remove(i);
+                i = 0;
+            }
+        }
+    }
+
+    private void Set_Unvivisble_All()
+    {
+        for(Sprite sprite : m_obj_list)
+        {
+            sprite.visible = false;
+        }
+    }
+
+
+
+
+
+}

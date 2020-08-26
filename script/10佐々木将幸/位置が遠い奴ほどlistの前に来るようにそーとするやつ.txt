@@ -1,0 +1,45 @@
+scene.h
+//対象との距離がより大きい順にソートする
+class C_Sort_Dist_Greater
+{
+	CBase* m_target;
+public:
+	C_Sort_Dist_Greater(CBase* a_target)
+	{
+		m_target = a_target;
+	}
+
+	bool operator()(CBase* a_left, CBase* a_right);
+};
+
+cpp
+bool C_Sort_Dist_Greater::operator()(CBase* a_left, CBase* a_right)
+{
+//C_SKydomeみたいに除外したいものを列挙する
+	if (typeid(*a_right) == typeid(C_Skydome))
+	{
+		return false;
+	}
+	if (typeid(*a_left) == typeid(C_Skydome))
+	{
+		return true;
+	}
+	D3DXVECTOR3 left_dist = a_left->Get_Pos() - m_target->Get_Pos();
+	D3DXVECTOR3 right_dist = a_right->Get_Pos() - m_target->Get_Pos();
+
+	FLOAT left_length_sq = D3DXVec3LengthSq(&left_dist);
+	FLOAT right_length_sq = D3DXVec3LengthSq(&right_dist);
+
+	return left_length_sq > right_length_sq;
+}
+
+
+
+
+
+
+draw前にかく
+
+CCamera* camera = CScene::GetGameObject<CCamera>();
+		C_Sort_Dist_Greater sort_dist(camera);
+		m_GameObject[1].sort(sort_dist);
